@@ -6,6 +6,59 @@
         <title>To-Do List</title>
     </head>
     <body>
-        <div>Hi</div>
+        <div id="site">
+            <header>
+                <img
+                    alt="To-do list site logo, an image of a checklist"
+                    class="logo"
+                />
+                <h1>To-Do Tracker</h1>
+                <img alt="user icon" class="user-icon" />
+                <div>Levi Ackerman</div>
+            </header>
+            <div class="sidebar">
+                <h2>Your Projects</h2>
+                <button class="add-project">Add a New Project</button>
+                <div class="project-list">
+                    <div class="project">
+                        <div>Unassigned Tasks<span>Count#</span></div>
+                        <button class="add-task">
+                            Add a New Task (to this project)
+                        </button>
+                        <button class="delete-project">Delete Project</button>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <h2>Your Tasks</h2>
+                <button class="add-task">Add a New Task</button>
+                <div class="filter">
+                    <button class="filter-option">Due Today</button>
+                    <button class="filter-option">Due Within a Week</button>
+                    <button class="filter-option">High Priority</button>
+                    <button class="filter-option">Incomplete</button>
+                    <button class="filter-option">Completed</button>
+                </div>
+                <div class="task-list">
+                    <div>
+                        <h3>Title</h3>
+                        <div>Due</div>
+                        <div>due date</div>
+                        <div>Description</div>
+                        <div>description</div>
+                        <div>Priority</div>
+                        <div>priority</div>
+                        <div>Notes</div>
+                        <div>notes</div>
+                        <button class="edit-task">Edit Task</button>
+                        <button class="delete-task">Delete Task</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
+<!-- <label for="task-description">Description</label>
+<textarea name="task-description" id="task-description" rows="5" cols="50">
+Describe your task [optional]</textarea
+> -->

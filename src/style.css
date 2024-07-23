@@ -1,3 +1,170 @@
-div {
-    background-color: blue;
+Reset CSS html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+    display: block;
+}
+body {
+    line-height: 1;
+}
+ol,
+ul {
+    list-style: none;
+}
+blockquote,
+q {
+    quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: "";
+    content: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+body {
+    background-image: linear-gradient(rgb(255, 252, 223), white);
+    background-repeat: no-repeat;
+}
+
+#site {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 15px;
+    min-height: 100vh;
+}
+
+header {
+    grid-area: 1 / 1 / 2 / -1;
+    display: grid;
+    grid-template-columns: 75px 1fr 75px 150px;
+    place-items: center;
+}
+
+h1 {
+    font-size: 3rem;
+    font-weight: bolder;
+}
+
+.sidebar {
+    grid-area: 2 / 1 / 3 / 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.project > div {
+    font-size: 1.8rem;
+}
+
+.content {
+    grid-area: 2 / 2 / 3 / -1;
+    display: grid;
 }
