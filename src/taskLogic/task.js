@@ -1,3 +1,5 @@
+import { DateHandler } from "../aggregator.js";
+
 class Task {
     constructor(title, dueDate, description, priority, notes) {
         this.title = title;
@@ -6,8 +8,10 @@ class Task {
         this.priority = priority;
         this.notes = notes;
     }
+
+    daysUntilDue() {
+        return DateHandler.daysUntil(this.dueDate);
+    }
 }
 
-
-
-export {Task}
+export { Task };
