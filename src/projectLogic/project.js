@@ -1,44 +1,52 @@
-import { Task } from "../aggregator.js"; //decide to keep this or not?? maybe move allprojects to index.js, or at least a new
-//module that feeds into index.js? need some memory for projects in allprojects and tasks in each project
+import { Task } from "../aggregator.js";
+import ShortUniqueId from "short-unique-id";
+const { randomUUID } = new ShortUniqueId({ length: 10 });
 
 class AllProjects {
     constructor() {
-        this.projects = [];
+        this.unassignedTasks = new Project("Unassigned Tasks");
     }
 
     addProject(title) {
-        this.projects.push(new Project(title));
+        const newProject = new Project(title);
+        this[newProject.id] = newProject;
     }
 
-    deleteProject(index) {
-        this.projects.splice(index, 1);
+    deleteProject(id) {
+        delete this[id];
     }
 
     list() {
-        return this.projects;
+        return Object.getOwnPropertyNames(this);
     }
 }
 
 class Project {
     constructor(title) {
+        this.id = randomUUID();
         this.title = title;
         this.tasks = [];
     }
-    //finish updated and decide if this is even how i want the logic to flow...seems bad cuz you'd have to come back
-    //and change this if tasks ever changed...
-    // addTask() {
-    //     this.tasks.push(new Task());
-    // }
 
-    // deleteTask(index) {
-    //     this.projects.splice(index, 1);
-    // }
+    addTask(title, dueDate, description, priority, notes) {
+        this.tasks.push(new Task(title, dueDate, description, priority, notes));
+    }
 
-    // list() {
-    //     return this.projects;
-    // }
+    deleteTask(id) {
+        let i = 0;
+        this.tasks.forEach((task) => {
+            if (task.id === id) {
+                this.tasks.splice(i, 1);
+                return;
+            }
+            i++;
+        });
+    }
+
+    list() {
+        return this.tasks;
+    }
 }
 
 const allProjects = new AllProjects();
-allProjects.addProject("Unassigned Tasks");
 export { allProjects };
