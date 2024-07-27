@@ -21,4 +21,5 @@ allProjects.unassignedTasks.addTask(
 );
 console.log(allProjects.unassignedTasks.list());
 console.log(task);
+console.log(allProjects.unassignedTasks.tasks[0].daysUntilDue());
 console.log(task.daysUntilDue());
