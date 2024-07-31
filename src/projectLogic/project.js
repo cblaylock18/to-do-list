@@ -16,6 +16,11 @@ class AllProjects {
         delete this[id];
     }
 
+    moveATask(Project1, Project2, task) {
+        Project2.tasks.push(task);
+        Project1.deleteTask(task.id);
+    }
+
     list() {
         return Object.getOwnPropertyNames(this);
     }
@@ -28,8 +33,14 @@ class Project {
         this.tasks = [];
     }
 
-    addTask(title, dueDate, description, priority, notes) {
-        this.tasks.push(new Task(title, dueDate, description, priority, notes));
+    edit(title) {
+        this.title = title;
+    }
+
+    addTask(title, dueDate, description, priority, notes, status) {
+        this.tasks.push(
+            new Task(title, dueDate, description, priority, notes, status)
+        );
     }
 
     deleteTask(id) {
@@ -45,6 +56,10 @@ class Project {
 
     list() {
         return this.tasks;
+    }
+
+    numberOfTasks() {
+        return this.tasks.length;
     }
 }
 
