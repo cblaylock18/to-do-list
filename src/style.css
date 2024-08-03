@@ -162,6 +162,17 @@ h2 {
     font-weight: bold;
 }
 
+.project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.project {
+    border: 1px solid black;
+    padding: 10px;
+}
+
 .project > div {
     font-size: 1.8rem;
 }

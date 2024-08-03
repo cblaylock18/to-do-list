@@ -23,7 +23,7 @@
             </div>
             <div class="content">
                 <h2>Your Tasks</h2>
-                <button class="add-task">Add a New Task</button>
+                <button class="add-task">Add a New Task to this Project</button>
                 <div class="filter">
                     <div>Filter:</div>
                     <button class="filter-option">Due Today</button>
@@ -49,6 +49,20 @@
                 </div>
             </div>
         </div>
+        <!-- Edit Project Title -->
+        <dialog id="edit-project-title" class="modal">
+            <div class="modal-content">
+                <h3></h3>
+                <label for="new-project-title">New Title</label>
+                <input
+                    type="text"
+                    id="new-project-title"
+                    name="new-project-title"
+                />
+                <button class="update-edit-project-title">Update</button>
+                <button class="cancel-edit-project-title">Cancel</button>
+            </div>
+        </dialog>
     </body>
 </html>
 <!-- <label for="task-description">Description</label>

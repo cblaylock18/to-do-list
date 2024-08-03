@@ -64,4 +64,6 @@ class Project {
 }
 
 const allProjects = new AllProjects();
-export { allProjects };
+export function getAllProjects() {
+    return allProjects;
+}
