@@ -4,7 +4,7 @@ const { randomUUID } = new ShortUniqueId({ length: 10 });
 
 class AllProjects {
     constructor() {
-        this.unassignedTasks = new Project("Unassigned Tasks");
+        this.unassignedTasks = new UnassignedTasksProject("Unassigned Tasks");
     }
 
     addProject(title) {
@@ -17,8 +17,8 @@ class AllProjects {
     }
 
     moveATask(Project1, Project2, task) {
-        Project2.tasks.push(task);
-        Project1.deleteTask(task.id);
+        this[Project2].tasks.push(task);
+        this[Project1].deleteTask(task.id);
     }
 
     list() {
@@ -63,7 +63,18 @@ class Project {
     }
 }
 
+class UnassignedTasksProject extends Project {
+    constructor() {
+        super("Unassigned Tasks");
+        this.id = "unassigned-tasks";
+    }
+}
+
 const allProjects = new AllProjects();
-export function getAllProjects() {
+function accessProjects() {
     return allProjects;
 }
+
+const getAllProjects = accessProjects();
+
+export { getAllProjects };
