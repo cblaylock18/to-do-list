@@ -4,6 +4,30 @@ import "./style.css";
 imageSourcer(); //provide sources for images
 
 getAllProjects.addProject("Project 1");
+getAllProjects.unassignedTasks.addTask(
+    "Tell Sidney Hi",
+    "7-27-24",
+    "Say hi",
+    "High",
+    "None",
+    "Incomplete"
+);
+getAllProjects[getAllProjects.list()[0]].addTask(
+    "Tell Sidney Hi",
+    "7-27-24",
+    "Say hi",
+    "High",
+    "None",
+    "Incomplete"
+);
+getAllProjects[getAllProjects.list()[0]].addTask(
+    "Tell Sidney Hi",
+    "7-27-24",
+    "Say hi",
+    "High",
+    "None",
+    "Incomplete"
+);
 getAllProjects[getAllProjects.list()[0]].addTask(
     "Tell Sidney Hi",
     "7-27-24",
@@ -20,6 +44,24 @@ getAllProjects[getAllProjects.list()[1]].addTask(
     "None",
     "Incomplete"
 );
+getAllProjects[getAllProjects.list()[1]].addTask(
+    "Tell Sidney Hi",
+    "7-29-24",
+    "Say hi",
+    "High",
+    "None",
+    "Complete"
+);
+getAllProjects[getAllProjects.list()[1]].addTask(
+    "Tell Sidney Hi",
+    "7-29-24",
+    "Say hi",
+    "High",
+    "None",
+    "Complete"
+);
 
+console.log(getAllProjects[getAllProjects.list()[1]].numberOfIncompleteTasks());
 console.table(getAllProjects.list());
 initializeDOM(getAllProjects);
+console.log(getAllProjects.list()[0])

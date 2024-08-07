@@ -10,6 +10,7 @@ class AllProjects {
     addProject(title) {
         const newProject = new Project(title);
         this[newProject.id] = newProject;
+        return newProject.id;
     }
 
     deleteProject(id) {
@@ -24,6 +25,16 @@ class AllProjects {
     list() {
         return Object.getOwnPropertyNames(this);
     }
+
+    selectAProject(id) {
+        for (const project in this) {
+            if (this[project].id === id) {
+                this[project].selected = true;
+            } else {
+                this[project].selected = false;
+            }
+        }
+    }
 }
 
 class Project {
@@ -31,6 +42,7 @@ class Project {
         this.id = randomUUID();
         this.title = title;
         this.tasks = [];
+        this.selected = false;
     }
 
     edit(title) {
@@ -38,9 +50,16 @@ class Project {
     }
 
     addTask(title, dueDate, description, priority, notes, status) {
-        this.tasks.push(
-            new Task(title, dueDate, description, priority, notes, status)
+        const newTask = new Task(
+            title,
+            dueDate,
+            description,
+            priority,
+            notes,
+            status
         );
+        this.tasks.push(newTask);
+        return newTask;
     }
 
     deleteTask(id) {
@@ -61,12 +80,33 @@ class Project {
     numberOfTasks() {
         return this.tasks.length;
     }
+
+    numberOfIncompleteTasks() {
+        let incompleteTasks = 0;
+        this.list().forEach((task) => {
+            if (task.status === "Incomplete") {
+                incompleteTasks++;
+            }
+        });
+        return incompleteTasks;
+    }
+
+    numberOfCompleteTasks() {
+        let completeTasks = 0;
+        this.list().forEach((task) => {
+            if (task.status === "Complete") {
+                completeTasks++;
+            }
+        });
+        return completeTasks;
+    }
 }
 
 class UnassignedTasksProject extends Project {
     constructor() {
         super("Unassigned Tasks");
-        this.id = "unassigned-tasks";
+        this.id = "unassignedTasks";
+        this.selected = true;
     }
 }
 

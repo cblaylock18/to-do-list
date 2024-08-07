@@ -23,7 +23,6 @@
             </div>
             <div class="content">
                 <h2>Your Tasks</h2>
-                <button class="add-task">Add a New Task to this Project</button>
                 <div class="filter">
                     <div>Filter:</div>
                     <button class="filter-option">Due Today</button>
@@ -33,19 +32,22 @@
                     <button class="filter-option">Completed</button>
                 </div>
                 <div class="task-list">
-                    <div>
-                        <h3>Title</h3>
-                        <div>Due</div>
-                        <div>due date</div>
-                        <div>Description</div>
-                        <div>description</div>
-                        <div>Priority</div>
-                        <div>priority</div>
-                        <div>Notes</div>
-                        <div>notes</div>
-                        <button class="edit-task">Edit Task</button>
-                        <button class="delete-task">Delete Task</button>
-                    </div>
+                    <template id="task-template">
+                        <div class="task">
+                            <h3 class="title">Title</h3>
+                            <div class="due">Due</div>
+                            <div class="due-content"></div>
+                            <div class="description">Description</div>
+                            <div class="description-content"></div>
+                            <div class="priority">Priority</div>
+                            <div class="priority-content"></div>
+                            <div class="notes">Notes</div>
+                            <div class="notes-content"></div>
+                            <div class="status-content"></div>
+                            <button class="edit-task">Edit</button>
+                            <button class="delete-task">Delete</button>
+                        </div>
+                    </template>
                 </div>
             </div>
         </div>
@@ -71,9 +73,58 @@
                 <button class="decline-are-you-sure">Cancel</button>
             </div>
         </dialog>
+        <!-- Add a project modal -->
+        <dialog id="add-project" class="modal">
+            <div>
+                <h3>Add a New Project</h3>
+                <label for="add-project-title">Title</label>
+                <input
+                    type="text"
+                    id="add-project-title"
+                    name="add-project-title"
+                />
+                <button class="accept-add-project">Add Project</button>
+                <button class="decline-add-project">Cancel</button>
+            </div>
+        </dialog>
+        <!-- Modal for adding/editing tasks -->
+        <dialog id="task-modal" class="modal">
+            <form>
+                <input
+                    type="text"
+                    id="task-title"
+                    name="task-title"
+                    placeholder="Title"
+                    required
+                />
+                <input
+                    type="date"
+                    id="task-due-date"
+                    name="task-due-date"
+                    required
+                />
+                <textarea
+                    id="task-description"
+                    name="task-description"
+                    placeholder="Description"
+                ></textarea>
+                <select id="task-priority" name="task-priority">
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                </select>
+                <textarea
+                    id="task-notes"
+                    name="task-notes"
+                    placeholder="Notes"
+                ></textarea>
+                <select id="task-status" name="task-status">
+                    <option value="Incomplete">Incomplete</option>
+                    <option value="Complete">Complete</option>
+                </select>
+                <button type="submit" class="accept-add-task">Add Task</button>
+                <button type="reset" class="cancel-add-task">Cancel</button>
+            </form>
+        </dialog>
     </body>
 </html>
-<!-- <label for="task-description">Description</label>
-<textarea name="task-description" id="task-description" rows="5" cols="50">
-Describe your task [optional]</textarea
-> -->

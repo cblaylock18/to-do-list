@@ -1,15 +1,31 @@
 import { getAllProjects } from "../aggregator";
 
+// select lists
 const projectList = document.querySelector(".project-list");
+const taskList = document.querySelector(".task-list");
+
+// select template
+const taskTemplate = document.getElementById("task-template").content;
+
+// select modals
 const editProjectModal = document.querySelector("#edit-project-title");
 const areYouSureModal = document.querySelector("#are-you-sure");
+const addProjectModal = document.querySelector("#add-project");
+const taskModal = document.querySelector("#task-modal");
+const taskForm = taskModal.querySelector("form");
 
 class Sidebar {
-    static initializeSidebar(allProjects) {
+    static initializeSidebar() {
         // initialize the projects
-        for (const project in allProjects) {
-            Sidebar.addAProject(allProjects[project]);
-        } // initialize button logic for things like modals, filters, adding tasks, etc.
+        for (const project in getAllProjects) {
+            Sidebar.addAProject(getAllProjects[project]);
+        }
+        // initialize button listener for adding a new project
+        const addProjectBtn = document.querySelector(".add-project");
+        addProjectBtn.addEventListener("click", Modal.addProject);
+
+        // Event delegation for project clicks
+        projectList.addEventListener("click", Tasks.selectAProject);
     }
 
     static addAProject(newProject) {
@@ -17,20 +33,23 @@ class Sidebar {
         const projectDiv = document.createElement("div");
         projectDiv.classList.add("project");
         projectDiv.dataset.id = newProject.id;
-        projectDiv.addEventListener("click", expandProject.expandTasks);
+        projectDiv.addEventListener("click", Tasks.selectAProject);
         // Creating and updating each projects title and task #
         const titleDiv = document.createElement("div");
+        const titleCountHeader = document.createElement("p");
         const titleCount = document.createElement("p");
         projectDiv.classList.add("project");
         projectDiv.dataset.id = newProject.id;
         titleDiv.textContent = newProject.title;
-        titleCount.textContent = 0;
-        // Appending children
+        titleCountHeader.textContent = "Tasks:";
+        titleCount.textContent = newProject.numberOfIncompleteTasks();
+
+        projectDiv.appendChild(titleDiv);
+        projectDiv.appendChild(titleCountHeader);
+        projectDiv.appendChild(titleCount);
 
         // Creating edit and delete buttons for all except unassigned tasks catch all
-        projectDiv.appendChild(titleDiv);
-        projectDiv.appendChild(titleCount);
-        if (newProject.id !== "unassigned-tasks") {
+        if (newProject.id !== "unassignedTasks") {
             // Creating an "add task" button
             const updateProjectBtn = document.createElement("button");
             updateProjectBtn.classList.add("update-project");
@@ -44,6 +63,12 @@ class Sidebar {
             projectDiv.appendChild(updateProjectBtn);
             projectDiv.appendChild(deleteProjectBtn);
         }
+        // Creating an "add task" button
+        const addTaskBtn = document.createElement("button");
+        addTaskBtn.classList.add("add-task");
+        addTaskBtn.textContent = "Add a Task";
+        addTaskBtn.addEventListener("click", Modal.addATask);
+        projectDiv.appendChild(addTaskBtn);
         projectList.appendChild(projectDiv);
     }
 
@@ -53,6 +78,11 @@ class Sidebar {
         projectList.removeChild(
             document.querySelector('[data-id="' + id + '"]')
         );
+        if (getAllProjects[id].selected === true) {
+            getAllProjects.selectAProject("unassignedTasks");
+            Tasks.clearTasks();
+            Tasks.initializeTasks();
+        }
         getAllProjects.deleteProject(id);
         areYouSureModal.close();
     }
@@ -65,12 +95,85 @@ class Sidebar {
         getAllProjects[id].edit(newTitle);
         editProjectModal.close();
     }
+}
 
-    static addTask() {}
+class Tasks {
+    static initializeTasks() {
+        getAllProjects.unassignedTasks.tasks.forEach((task) => {
+            Tasks.listATask(task);
+        });
+    }
 
-    static updateTask() {}
+    static selectAProject(event) {
+        // Find the project div by traversing the DOM up from the event target
+        let projectDiv = event.target;
+        while (
+            projectDiv &&
+            !projectDiv.dataset.id &&
+            projectDiv !== projectList
+        ) {
+            projectDiv = projectDiv.parentNode;
+        }
 
-    static deleteTask() {}
+        // If a valid project div is found, proceed with task selection
+        if (projectDiv && projectDiv.dataset.id) {
+            const projectId = projectDiv.dataset.id;
+            Tasks.clearTasks();
+            getAllProjects.selectAProject(projectId);
+            const project = getAllProjects[projectId];
+            project.tasks.forEach((task) => {
+                Tasks.listATask(task);
+            });
+        }
+    }
+
+    static listATask(task) {
+        // update template with relevant info
+        const taskClone = document.importNode(taskTemplate, true);
+        taskClone.querySelector(".title").textContent = task.title;
+        taskClone.querySelector(".due-content").textContent = task.dueDate;
+        taskClone.querySelector(".description-content").textContent =
+            task.description;
+        taskClone.querySelector(".priority-content").textContent =
+            task.priority;
+        taskClone.querySelector(".notes-content").textContent = task.notes;
+        taskClone.querySelector(".status-content").textContent = task.status;
+
+        // button event listeners
+        taskClone
+            .querySelector(".edit-task")
+            .addEventListener("click", Modal.editTask);
+        taskClone
+            .querySelector(".delete-task")
+            .addEventListener("click", Modal.areYouSure);
+        taskList.appendChild(taskClone);
+    }
+
+    static clearTasks() {
+        while (taskList.childElementCount > 0)
+            taskList.removeChild(taskList.lastChild);
+    }
+
+    static addATask(id) {
+        const title = taskModal.querySelector("#task-title").value;
+        const dueDate = taskModal.querySelector("#task-due-date").value;
+        const description = taskModal.querySelector("#task-description").value;
+        const priority = taskModal.querySelector("#task-priority").value;
+        const notes = taskModal.querySelector("#task-notes").value;
+        const status = taskModal.querySelector("#task-status").value;
+        const newTask = getAllProjects[id].addTask(
+            title,
+            dueDate,
+            description,
+            priority,
+            notes,
+            status
+        );
+        if (getAllProjects[id].selected === true) {
+            Tasks.listATask(newTask);
+        }
+        Modal.closeTaskModal();
+    }
 }
 
 class Modal {
@@ -81,19 +184,45 @@ class Modal {
         areYouSureModal
             .querySelector(".decline-are-you-sure")
             .addEventListener("click", Modal.closeAreYouSureModal);
+        addProjectModal
+            .querySelector(".decline-add-project")
+            .addEventListener("click", Modal.closeAddProjectModal);
+        addProjectModal
+            .querySelector(".accept-add-project")
+            .addEventListener("click", Modal.addProjectBtnClick);
+        taskModal
+            .querySelector(".cancel-add-task")
+            .addEventListener("click", Modal.closeTaskModal);
+        taskForm.addEventListener("submit", (event) => event.preventDefault());
     }
+
     static closeEditProjectModal() {
         editProjectModal
             .querySelector(".update-edit-project-title")
             .removeEventListener("click", Modal.updateProjectBtnClick);
         editProjectModal.close();
     }
+
     static closeAreYouSureModal() {
         areYouSureModal
             .querySelector(".accept-are-you-sure")
             .removeEventListener("click", Modal.deleteItemBtnClick);
         areYouSureModal.close();
     }
+
+    static closeAddProjectModal() {
+        addProjectModal.querySelector("input").value = "";
+        addProjectModal.close();
+    }
+
+    static closeTaskModal() {
+        taskModal
+            .querySelector(".accept-add-task")
+            .removeEventListener("click", Modal.addATaskBtnClick);
+        taskModal.querySelector("form").reset();
+        taskModal.close();
+    }
+
     static updateProject(event) {
         event.stopPropagation();
         const projectTitle =
@@ -108,7 +237,9 @@ class Modal {
             .querySelector(".update-edit-project-title")
             .addEventListener("click", Modal.updateProjectBtnClick);
     }
+
     static areYouSure(event) {
+        //needs to be edited to account for whether item is project or task!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         event.stopPropagation();
         areYouSureModal.querySelector(
             "h3"
@@ -123,17 +254,43 @@ class Modal {
             .querySelector(".accept-are-you-sure")
             .addEventListener("click", Modal.deleteItemBtnClick);
     }
-}
 
-class expandProject {
-    static expandTasks() {
-        console.log("I expanded the tasks!");
+    static addProject() {
+        addProjectModal.showModal();
     }
+
+    static addProjectBtnClick() {
+        const newProjectTitle =
+            addProjectModal.querySelector("#add-project-title").value;
+        const newProjectId = getAllProjects.addProject(newProjectTitle);
+        Sidebar.addAProject(getAllProjects[newProjectId]);
+        Modal.closeAddProjectModal();
+    }
+
+    static addATask(event) {
+        event.stopPropagation();
+        const projectId = event.target.closest(".project").dataset.id;
+        Modal.addATaskBtnClick = () => {
+            event.preventDefault();
+            if (!taskForm.checkValidity()) {
+                taskForm.reportValidity();
+                return;
+            }
+            Tasks.addATask(projectId);
+        };
+        taskModal
+            .querySelector(".accept-add-task")
+            .addEventListener("click", Modal.addATaskBtnClick);
+        taskModal.showModal();
+    }
+
+    static editTask() {}
 }
 
 function initializeDOM() {
-    Sidebar.initializeSidebar(getAllProjects);
+    Sidebar.initializeSidebar();
     Modal.initializeModals();
+    Tasks.initializeTasks();
 }
 
 export { initializeDOM };
