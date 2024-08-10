@@ -1,4 +1,4 @@
-import { getAllProjects } from "../aggregator";
+import { getAllProjects, DateHandler } from "../aggregator";
 
 // select lists
 const projectList = document.querySelector(".project-list");
@@ -41,7 +41,7 @@ class Sidebar {
         projectDiv.classList.add("project");
         projectDiv.dataset.id = newProject.id;
         titleDiv.textContent = newProject.title;
-        titleCountHeader.textContent = "Tasks:";
+        titleCountHeader.textContent = "Incomplete Tasks:";
         titleCount.textContent = newProject.numberOfIncompleteTasks();
 
         projectDiv.appendChild(titleDiv);
@@ -59,7 +59,10 @@ class Sidebar {
             const deleteProjectBtn = document.createElement("button");
             deleteProjectBtn.classList.add("delete-project");
             deleteProjectBtn.textContent = "Delete Project";
-            deleteProjectBtn.addEventListener("click", Modal.areYouSure);
+            deleteProjectBtn.addEventListener(
+                "click",
+                Modal.areYouSureProjectDeletion
+            );
             projectDiv.appendChild(updateProjectBtn);
             projectDiv.appendChild(deleteProjectBtn);
         }
@@ -130,6 +133,7 @@ class Tasks {
     static listATask(task) {
         // update template with relevant info
         const taskClone = document.importNode(taskTemplate, true);
+        taskClone.querySelector(".task").dataset.id = task.id;
         taskClone.querySelector(".title").textContent = task.title;
         taskClone.querySelector(".due-content").textContent = task.dueDate;
         taskClone.querySelector(".description-content").textContent =
@@ -145,8 +149,21 @@ class Tasks {
             .addEventListener("click", Modal.editTask);
         taskClone
             .querySelector(".delete-task")
-            .addEventListener("click", Modal.areYouSure);
+            .addEventListener("click", Modal.areYouSureTaskDeletion);
         taskList.appendChild(taskClone);
+    }
+
+    static editExistingTask(taskId) {
+        // update
+        const taskDOM = document.querySelector('[data-id="' + taskId + '"]');
+        const task = getAllProjects.getTask(taskId);
+        taskDOM.querySelector(".title").textContent = task.title;
+        taskDOM.querySelector(".due-content").textContent = task.dueDate;
+        taskDOM.querySelector(".description-content").textContent =
+            task.description;
+        taskDOM.querySelector(".priority-content").textContent = task.priority;
+        taskDOM.querySelector(".notes-content").textContent = task.notes;
+        taskDOM.querySelector(".status-content").textContent = task.status;
     }
 
     static clearTasks() {
@@ -160,7 +177,9 @@ class Tasks {
         const description = taskModal.querySelector("#task-description").value;
         const priority = taskModal.querySelector("#task-priority").value;
         const notes = taskModal.querySelector("#task-notes").value;
-        const status = taskModal.querySelector("#task-status").value;
+        const status = taskModal.querySelector(
+            '#task-status input[name="status"]:checked'
+        ).value;
         const newTask = getAllProjects[id].addTask(
             title,
             dueDate,
@@ -173,6 +192,38 @@ class Tasks {
             Tasks.listATask(newTask);
         }
         Modal.closeTaskModal();
+    }
+
+    static editATask(projectId, taskId) {
+        const title = taskModal.querySelector("#task-title").value;
+        const dueDate = taskModal.querySelector("#task-due-date").value;
+        const description = taskModal.querySelector("#task-description").value;
+        const priority = taskModal.querySelector("#task-priority").value;
+        const notes = taskModal.querySelector("#task-notes").value;
+        const status = taskModal.querySelector(
+            '#task-status input[name="status"]:checked'
+        ).value;
+        getAllProjects[projectId].editTask(
+            taskId,
+            title,
+            dueDate,
+            description,
+            priority,
+            notes,
+            status
+        );
+
+        Tasks.editExistingTask(taskId);
+
+        Modal.closeTaskModal();
+    }
+
+    static deleteTask(projectId, taskId) {
+        const taskDOM = document.querySelector('[data-id="' + taskId + '"]');
+        taskDOM.remove();
+        getAllProjects[projectId].deleteTask(taskId);
+
+        Modal.closeAreYouSureModal();
     }
 }
 
@@ -206,7 +257,10 @@ class Modal {
     static closeAreYouSureModal() {
         areYouSureModal
             .querySelector(".accept-are-you-sure")
-            .removeEventListener("click", Modal.deleteItemBtnClick);
+            .removeEventListener("click", Modal.deleteProjectBtnClick);
+        areYouSureModal
+            .querySelector(".accept-are-you-sure")
+            .removeEventListener("click", Modal.deleteTaskBtnClick);
         areYouSureModal.close();
     }
 
@@ -238,8 +292,7 @@ class Modal {
             .addEventListener("click", Modal.updateProjectBtnClick);
     }
 
-    static areYouSure(event) {
-        //needs to be edited to account for whether item is project or task!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    static areYouSureProjectDeletion(event) {
         event.stopPropagation();
         areYouSureModal.querySelector(
             "h3"
@@ -247,12 +300,28 @@ class Modal {
             event.target.parentNode.querySelector("div").textContent
         }?`;
         areYouSureModal.showModal();
-        Modal.deleteItemBtnClick = () => {
+        Modal.deleteProjectBtnClick = () => {
             Sidebar.deleteProject(event.target.parentNode.dataset.id);
         };
         areYouSureModal
             .querySelector(".accept-are-you-sure")
-            .addEventListener("click", Modal.deleteItemBtnClick);
+            .addEventListener("click", Modal.deleteProjectBtnClick);
+    }
+    static areYouSureTaskDeletion(event) {
+        event.stopPropagation();
+        const taskId = event.target.closest(".task").dataset.id;
+        const task = getAllProjects.getTask(taskId);
+        const projectId = getAllProjects.selectedProject();
+        areYouSureModal.querySelector(
+            "h3"
+        ).textContent = `Are you sure you'd like to delete ${task.title}?`;
+        areYouSureModal.showModal();
+        Modal.deleteTaskBtnClick = () => {
+            Tasks.deleteTask(projectId, taskId);
+        };
+        areYouSureModal
+            .querySelector(".accept-are-you-sure")
+            .addEventListener("click", Modal.deleteTaskBtnClick);
     }
 
     static addProject() {
@@ -281,10 +350,40 @@ class Modal {
         taskModal
             .querySelector(".accept-add-task")
             .addEventListener("click", Modal.addATaskBtnClick);
+        taskModal.querySelector(".accept-add-task").textContent = "Add Task";
         taskModal.showModal();
     }
 
-    static editTask() {}
+    static editTask(event) {
+        event.stopPropagation();
+        const taskId = event.target.closest(".task").dataset.id;
+        const task = getAllProjects.getTask(taskId);
+        const projectId = getAllProjects.selectedProject();
+        Modal.editATaskBtnClick = () => {
+            event.preventDefault();
+            if (!taskForm.checkValidity()) {
+                taskForm.reportValidity();
+                return;
+            }
+            Tasks.editATask(projectId, taskId);
+        };
+        taskModal
+            .querySelector(".accept-add-task")
+            .addEventListener("click", Modal.editATaskBtnClick);
+        taskModal.querySelector(".accept-add-task").textContent = "Save Task";
+        taskModal.querySelector("#task-title").value = task.title;
+        taskModal.querySelector("#task-due-date").value = DateHandler.format(
+            task.dueDate,
+            "yyyy-MM-dd"
+        );
+        taskModal.querySelector("#task-description").value = task.description;
+        taskModal.querySelector("#task-priority").value = task.priority;
+        taskModal.querySelector("#task-notes").value = task.notes;
+        taskModal.querySelector(
+            `#task-status input[name="status"][value="${task.status}"]`
+        ).checked = true;
+        taskModal.showModal();
+    }
 }
 
 function initializeDOM() {

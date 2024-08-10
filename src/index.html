@@ -23,14 +23,6 @@
             </div>
             <div class="content">
                 <h2>Your Tasks</h2>
-                <div class="filter">
-                    <div>Filter:</div>
-                    <button class="filter-option">Due Today</button>
-                    <button class="filter-option">Due Within a Week</button>
-                    <button class="filter-option">High Priority</button>
-                    <button class="filter-option">Incomplete</button>
-                    <button class="filter-option">Completed</button>
-                </div>
                 <div class="task-list">
                     <template id="task-template">
                         <div class="task">
@@ -118,10 +110,30 @@
                     name="task-notes"
                     placeholder="Notes"
                 ></textarea>
-                <select id="task-status" name="task-status">
-                    <option value="Incomplete">Incomplete</option>
-                    <option value="Complete">Complete</option>
-                </select>
+                <fieldset id="task-status">
+                    <legend>Status:</legend>
+                    <div>
+                        <input
+                            type="radio"
+                            id="incomplete"
+                            name="status"
+                            value="Incomplete"
+                            checked
+                        />
+                        <label for="incomplete">Incomplete</label>
+                    </div>
+
+                    <div>
+                        <input
+                            type="radio"
+                            id="complete"
+                            name="status"
+                            value="Complete"
+                        />
+                        <label for="complete">Complete</label>
+                    </div>
+                </fieldset>
+                <legend>Status:</legend>
                 <button type="submit" class="accept-add-task">Add Task</button>
                 <button type="reset" class="cancel-add-task">Cancel</button>
             </form>

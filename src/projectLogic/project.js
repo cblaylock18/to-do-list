@@ -35,6 +35,26 @@ class AllProjects {
             }
         }
     }
+
+    selectedProject() {
+        let selectedId = "";
+        for (const project in this) {
+            if (this[project].selected === true) {
+                selectedId = this[project].id;
+            }
+        }
+        return selectedId;
+    }
+
+    getTask(taskId) {
+        for (const project in this) {
+            for (const task of this[project].tasks) {
+                if (task.id === taskId) {
+                    return task;
+                }
+            }
+        }
+    }
 }
 
 class Project {
@@ -99,6 +119,14 @@ class Project {
             }
         });
         return completeTasks;
+    }
+
+    editTask(id, title, dueDate, description, priority, notes, status) {
+        this.tasks.forEach((task) => {
+            if (task.id === id) {
+                task.edit(title, dueDate, description, priority, notes, status);
+            }
+        });
     }
 }
 
