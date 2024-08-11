@@ -64,4 +64,4 @@ getAllProjects[getAllProjects.list()[1]].addTask(
 console.log(getAllProjects[getAllProjects.list()[1]].numberOfIncompleteTasks());
 console.table(getAllProjects.list());
 initializeDOM(getAllProjects);
-console.log(getAllProjects.list()[0])
+console.log(getAllProjects.list()[0]);

@@ -14,6 +14,9 @@ const addProjectModal = document.querySelector("#add-project");
 const taskModal = document.querySelector("#task-modal");
 const taskForm = taskModal.querySelector("form");
 
+// select task header
+const taskHeader = document.querySelector(".task-header");
+
 class Sidebar {
     static initializeSidebar() {
         // initialize the projects
@@ -38,6 +41,7 @@ class Sidebar {
         const titleDiv = document.createElement("div");
         const titleCountHeader = document.createElement("p");
         const titleCount = document.createElement("p");
+        titleCount.classList.add("task-count");
         projectDiv.classList.add("project");
         projectDiv.dataset.id = newProject.id;
         titleDiv.textContent = newProject.title;
@@ -53,7 +57,7 @@ class Sidebar {
             // Creating an "add task" button
             const updateProjectBtn = document.createElement("button");
             updateProjectBtn.classList.add("update-project");
-            updateProjectBtn.textContent = "Update Project Title";
+            updateProjectBtn.textContent = "Update Title";
             updateProjectBtn.addEventListener("click", Modal.updateProject);
             // Creating a "delete project" button
             const deleteProjectBtn = document.createElement("button");
@@ -87,7 +91,7 @@ class Sidebar {
             Tasks.initializeTasks();
         }
         getAllProjects.deleteProject(id);
-        areYouSureModal.close();
+        Modal.closeAreYouSureModal();
     }
 
     static updateProject(id) {
@@ -96,7 +100,7 @@ class Sidebar {
             .querySelector('[data-id="' + id + '"]')
             .querySelector("div").textContent = newTitle;
         getAllProjects[id].edit(newTitle);
-        editProjectModal.close();
+        Modal.closeEditProjectModal();
     }
 }
 
@@ -104,6 +108,11 @@ class Tasks {
     static initializeTasks() {
         getAllProjects.unassignedTasks.tasks.forEach((task) => {
             Tasks.listATask(task);
+        });
+        Array.from(projectList.children).forEach((child) => {
+            if (child.dataset.id === "unassignedTasks") {
+                child.classList.add("selected");
+            }
         });
     }
 
@@ -123,7 +132,16 @@ class Tasks {
             const projectId = projectDiv.dataset.id;
             Tasks.clearTasks();
             getAllProjects.selectAProject(projectId);
+            Array.from(projectList.children).forEach((child) => {
+                child.classList.remove("selected");
+            });
+            projectDiv.classList.add("selected");
             const project = getAllProjects[projectId];
+            if (project.id === "unassignedTasks") {
+                taskHeader.textContent = `Unassigned Tasks`;
+            } else {
+                taskHeader.textContent = `${project.title} Tasks`;
+            }
             project.tasks.forEach((task) => {
                 Tasks.listATask(task);
             });
@@ -133,6 +151,18 @@ class Tasks {
     static listATask(task) {
         // update template with relevant info
         const taskClone = document.importNode(taskTemplate, true);
+
+        // use classes to signify priority and status, red yellow green or grey
+        if (task.status === "Complete") {
+            taskClone.querySelector(".task").classList.add("complete");
+        } else if (task.priority === "Low") {
+            taskClone.querySelector(".task").classList.add("low");
+        } else if (task.priority === "Medium") {
+            taskClone.querySelector(".task").classList.add("medium");
+        } else if (task.priority === "High") {
+            taskClone.querySelector(".task").classList.add("high");
+        }
+
         taskClone.querySelector(".task").dataset.id = task.id;
         taskClone.querySelector(".title").textContent = task.title;
         taskClone.querySelector(".due-content").textContent = task.dueDate;
@@ -164,6 +194,17 @@ class Tasks {
         taskDOM.querySelector(".priority-content").textContent = task.priority;
         taskDOM.querySelector(".notes-content").textContent = task.notes;
         taskDOM.querySelector(".status-content").textContent = task.status;
+
+        taskDOM.classList.remove("complete", "low", "medium", "high");
+        if (task.status === "Complete") {
+            taskDOM.classList.add("complete");
+        } else if (task.priority === "Low") {
+            taskDOM.classList.add("low");
+        } else if (task.priority === "Medium") {
+            taskDOM.classList.add("medium");
+        } else if (task.priority === "High") {
+            taskDOM.classList.add("high");
+        }
     }
 
     static clearTasks() {
@@ -171,7 +212,7 @@ class Tasks {
             taskList.removeChild(taskList.lastChild);
     }
 
-    static addATask(id) {
+    static addATask(projectId) {
         const title = taskModal.querySelector("#task-title").value;
         const dueDate = taskModal.querySelector("#task-due-date").value;
         const description = taskModal.querySelector("#task-description").value;
@@ -180,7 +221,7 @@ class Tasks {
         const status = taskModal.querySelector(
             '#task-status input[name="status"]:checked'
         ).value;
-        const newTask = getAllProjects[id].addTask(
+        const newTask = getAllProjects[projectId].addTask(
             title,
             dueDate,
             description,
@@ -188,10 +229,13 @@ class Tasks {
             notes,
             status
         );
-        if (getAllProjects[id].selected === true) {
+        if (getAllProjects[projectId].selected === true) {
             Tasks.listATask(newTask);
         }
-        Modal.closeTaskModal();
+        projectList
+            .querySelector('[data-id="' + projectId + '"]')
+            .querySelector(".task-count").textContent =
+            getAllProjects[projectId].numberOfIncompleteTasks();
     }
 
     static editATask(projectId, taskId) {
@@ -212,17 +256,21 @@ class Tasks {
             notes,
             status
         );
-
+        projectList
+            .querySelector('[data-id="' + projectId + '"]')
+            .querySelector(".task-count").textContent =
+            getAllProjects[projectId].numberOfIncompleteTasks();
         Tasks.editExistingTask(taskId);
-
-        Modal.closeTaskModal();
     }
 
     static deleteTask(projectId, taskId) {
         const taskDOM = document.querySelector('[data-id="' + taskId + '"]');
         taskDOM.remove();
         getAllProjects[projectId].deleteTask(taskId);
-
+        projectList
+            .querySelector('[data-id="' + projectId + '"]')
+            .querySelector(".task-count").textContent =
+            getAllProjects[projectId].numberOfIncompleteTasks();
         Modal.closeAreYouSureModal();
     }
 }
@@ -245,12 +293,21 @@ class Modal {
             .querySelector(".cancel-add-task")
             .addEventListener("click", Modal.closeTaskModal);
         taskForm.addEventListener("submit", (event) => event.preventDefault());
+
+        // accounting for escaping the modal some other way
+        editProjectModal.addEventListener("close", Modal.closeEditProjectModal);
+        areYouSureModal.addEventListener("close", Modal.closeAreYouSureModal);
+        addProjectModal.addEventListener("close", Modal.closeAddProjectModal);
+        taskModal.addEventListener("close", Modal.closeTaskModal);
     }
 
     static closeEditProjectModal() {
         editProjectModal
             .querySelector(".update-edit-project-title")
             .removeEventListener("click", Modal.updateProjectBtnClick);
+        editProjectModal
+            .querySelector("#new-project-title")
+            .classList.remove("not-long-enough-error");
         editProjectModal.close();
     }
 
@@ -266,6 +323,9 @@ class Modal {
 
     static closeAddProjectModal() {
         addProjectModal.querySelector("input").value = "";
+        addProjectModal
+            .querySelector("#add-project-title")
+            .classList.remove("not-long-enough-error");
         addProjectModal.close();
     }
 
@@ -273,6 +333,9 @@ class Modal {
         taskModal
             .querySelector(".accept-add-task")
             .removeEventListener("click", Modal.addATaskBtnClick);
+        taskModal
+            .querySelector(".accept-add-task")
+            .removeEventListener("click", Modal.editATaskBtnClick);
         taskModal.querySelector("form").reset();
         taskModal.close();
     }
@@ -285,6 +348,14 @@ class Modal {
         editProjectModal.querySelector("input").value = projectTitle;
         editProjectModal.showModal();
         Modal.updateProjectBtnClick = () => {
+            const proposedNewTitle =
+                editProjectModal.querySelector("input").value;
+            if (proposedNewTitle.length < 1) {
+                editProjectModal
+                    .querySelector("#new-project-title")
+                    .classList.add("not-long-enough-error");
+                return;
+            }
             Sidebar.updateProject(event.target.parentNode.dataset.id);
         };
         editProjectModal
@@ -329,9 +400,15 @@ class Modal {
     }
 
     static addProjectBtnClick() {
-        const newProjectTitle =
+        const proposedNewTitle =
             addProjectModal.querySelector("#add-project-title").value;
-        const newProjectId = getAllProjects.addProject(newProjectTitle);
+        if (proposedNewTitle.length < 1) {
+            addProjectModal
+                .querySelector("#add-project-title")
+                .classList.add("not-long-enough-error");
+            return;
+        }
+        const newProjectId = getAllProjects.addProject(proposedNewTitle);
         Sidebar.addAProject(getAllProjects[newProjectId]);
         Modal.closeAddProjectModal();
     }
@@ -346,6 +423,7 @@ class Modal {
                 return;
             }
             Tasks.addATask(projectId);
+            Modal.closeTaskModal();
         };
         taskModal
             .querySelector(".accept-add-task")
@@ -366,6 +444,7 @@ class Modal {
                 return;
             }
             Tasks.editATask(projectId, taskId);
+            Modal.closeTaskModal();
         };
         taskModal
             .querySelector(".accept-add-task")
@@ -387,6 +466,7 @@ class Modal {
 }
 
 function initializeDOM() {
+    taskHeader.textContent = `Unassigned Tasks`;
     Sidebar.initializeSidebar();
     Modal.initializeModals();
     Tasks.initializeTasks();
