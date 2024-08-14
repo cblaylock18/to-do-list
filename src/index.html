@@ -38,6 +38,7 @@
                             <div class="status-content"></div>
                             <button class="edit-task">Edit</button>
                             <button class="delete-task">Delete</button>
+                            <button class="move-task">Move</button>
                         </div>
                     </template>
                 </div>
@@ -145,6 +146,15 @@
                 <button type="submit" class="accept-add-task">Add Task</button>
                 <button type="reset" class="cancel-add-task">Cancel</button>
             </form>
+        </dialog>
+        <!-- Move a task modal -->
+        <dialog id="move-a-task" class="modal">
+            <div>
+                <h3></h3>
+                <select id="a-new-project" name="a-new-project"></select>
+                <button class="accept-move-task">Move</button>
+                <button class="decline-move-task">Cancel</button>
+            </div>
         </dialog>
     </body>
 </html>

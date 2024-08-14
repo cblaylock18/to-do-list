@@ -13,6 +13,7 @@ const areYouSureModal = document.querySelector("#are-you-sure");
 const addProjectModal = document.querySelector("#add-project");
 const taskModal = document.querySelector("#task-modal");
 const taskForm = taskModal.querySelector("form");
+const moveTaskModal = document.querySelector("#move-a-task");
 
 // select task header
 const taskHeader = document.querySelector(".task-header");
@@ -180,6 +181,9 @@ class Tasks {
         taskClone
             .querySelector(".delete-task")
             .addEventListener("click", Modal.areYouSureTaskDeletion);
+        taskClone
+            .querySelector(".move-task")
+            .addEventListener("click", Modal.moveTask);
         taskList.appendChild(taskClone);
     }
 
@@ -208,8 +212,9 @@ class Tasks {
     }
 
     static clearTasks() {
-        while (taskList.childElementCount > 0)
+        while (taskList.childElementCount > 0) {
             taskList.removeChild(taskList.lastChild);
+        }
     }
 
     static addATask(projectId) {
@@ -273,6 +278,11 @@ class Tasks {
             getAllProjects[projectId].numberOfIncompleteTasks();
         Modal.closeAreYouSureModal();
     }
+
+    static moveATask(currentProjectId, newProjectId, task) {
+        getAllProjects.moveATask(currentProjectId, newProjectId, task);
+        Tasks.deleteTask(currentProjectId, task.id);
+    }
 }
 
 class Modal {
@@ -293,12 +303,16 @@ class Modal {
             .querySelector(".cancel-add-task")
             .addEventListener("click", Modal.closeTaskModal);
         taskForm.addEventListener("submit", (event) => event.preventDefault());
+        moveTaskModal
+            .querySelector(".decline-move-task")
+            .addEventListener("click", Modal.closeMoveTaskModal);
 
         // accounting for escaping the modal some other way
         editProjectModal.addEventListener("close", Modal.closeEditProjectModal);
         areYouSureModal.addEventListener("close", Modal.closeAreYouSureModal);
         addProjectModal.addEventListener("close", Modal.closeAddProjectModal);
         taskModal.addEventListener("close", Modal.closeTaskModal);
+        moveTaskModal.addEventListener("close", Modal.closeMoveTaskModal);
     }
 
     static closeEditProjectModal() {
@@ -338,6 +352,22 @@ class Modal {
             .removeEventListener("click", Modal.editATaskBtnClick);
         taskModal.querySelector("form").reset();
         taskModal.close();
+    }
+
+    static closeMoveTaskModal() {
+        moveTaskModal
+            .querySelector(".accept-move-task")
+            .removeEventListener("click", Modal.moveATaskBtnClick);
+        while (
+            moveTaskModal.querySelector("#a-new-project").childElementCount > 0
+        ) {
+            moveTaskModal
+                .querySelector("#a-new-project")
+                .removeChild(
+                    moveTaskModal.querySelector("#a-new-project").lastChild
+                );
+        }
+        moveTaskModal.close();
     }
 
     static updateProject(event) {
@@ -462,6 +492,30 @@ class Modal {
             `#task-status input[name="status"][value="${task.status}"]`
         ).checked = true;
         taskModal.showModal();
+    }
+
+    static moveTask(event) {
+        event.stopPropagation();
+        const taskId = event.target.closest(".task").dataset.id;
+        const task = getAllProjects.getTask(taskId);
+        const currentProjectId = getAllProjects.selectedProject();
+        const selector = moveTaskModal.querySelector("#a-new-project");
+        getAllProjects.list().forEach((projectId) => {
+            const option = document.createElement("option");
+            option.value = projectId;
+            option.textContent = getAllProjects[projectId].title;
+            selector.appendChild(option);
+        });
+        moveTaskModal.querySelector("h3").textContent = `Move ${task.title}?`;
+        Modal.moveATaskBtnClick = () => {
+            const newProjectId = selector.value;
+            Tasks.moveATask(currentProjectId, newProjectId, task);
+            Modal.closeMoveTaskModal();
+        };
+        moveTaskModal
+            .querySelector(".accept-move-task")
+            .addEventListener("click", Modal.moveATaskBtnClick);
+        moveTaskModal.showModal();
     }
 }
 

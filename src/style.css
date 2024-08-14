@@ -286,12 +286,12 @@ dialog {
 @media screen and (max-width: 600px) {
     #site {
         grid-template-columns: 100vw;
-        grid-template-rows: 75px min-content min-content;
+        grid-template-rows: 150px min-content min-content;
     }
 
     header {
         grid-area: 1 / 1 / 2 / 2;
-        grid-template-columns: 1fr 75px 75px;
+        grid-template-columns: 100%;
         grid-template-rows: min-content;
         margin-top: 15px;
         margin-bottom: 15px;
@@ -311,5 +311,10 @@ dialog {
         grid-template-columns: 100%;
         grid-template-rows: 50px 1fr;
         gap: 15px;
+    }
+
+    .task {
+        width: 225px;
+        justify-self: center;
     }
 }
