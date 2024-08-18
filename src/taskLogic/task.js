@@ -55,6 +55,10 @@ class Task {
     daysUntilDue() {
         return DateHandler.daysUntil(this.dueDate);
     }
+
+    toggleStatus() {
+        this.status = this.status === "Incomplete" ? "Complete" : "Incomplete";
+    }
 }
 
 export { Task };

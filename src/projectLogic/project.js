@@ -128,6 +128,14 @@ class Project {
             }
         });
     }
+
+    toggleTaskStatus(id) {
+        this.tasks.forEach((task) => {
+            if (task.id === id) {
+                task.toggleStatus();
+            }
+        });
+    }
 }
 
 class UnassignedTasksProject extends Project {

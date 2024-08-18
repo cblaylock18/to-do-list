@@ -80,8 +80,6 @@ class Sidebar {
         projectList.appendChild(projectDiv);
     }
 
-    static expandTasks() {}
-
     static deleteProject(id) {
         projectList.removeChild(
             document.querySelector('[data-id="' + id + '"]')
@@ -184,6 +182,9 @@ class Tasks {
         taskClone
             .querySelector(".move-task")
             .addEventListener("click", Modal.moveTask);
+        taskClone
+            .querySelector(".status-content")
+            .addEventListener("click", Tasks.toggleCompletion);
         taskList.appendChild(taskClone);
     }
 
@@ -209,6 +210,22 @@ class Tasks {
         } else if (task.priority === "High") {
             taskDOM.classList.add("high");
         }
+    }
+
+    static toggleCompletion(event) {
+        event.stopPropagation();
+        const taskId = event.target.closest(".task").dataset.id;
+        const task = getAllProjects.getTask(taskId);
+        const projectId = getAllProjects.selectedProject();
+        getAllProjects[projectId].toggleTaskStatus(taskId);
+        const taskDOM = document.querySelector('[data-id="' + taskId + '"]');
+        taskDOM.remove();
+        Tasks.listATask(task);
+
+        projectList
+            .querySelector('[data-id="' + projectId + '"]')
+            .querySelector(".task-count").textContent =
+            getAllProjects[projectId].numberOfIncompleteTasks();
     }
 
     static clearTasks() {
