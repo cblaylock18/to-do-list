@@ -340,6 +340,18 @@ class Modal {
         moveTaskModal.addEventListener("close", Modal.closeMoveTaskModal);
     }
 
+    static highlightFirstInputOnModalOpen(modal) {
+        const firstInput = modal.querySelector("input, textarea");
+        console.log(firstInput);
+        console.log("hi");
+        if (firstInput) {
+            firstInput.focus();
+            setTimeout(() => {
+                firstInput.select();
+            }, 10);
+        }
+    }
+
     static closeEditProjectModal() {
         editProjectModal
             .querySelector(".update-edit-project-title")
@@ -401,6 +413,7 @@ class Modal {
             event.target.parentNode.querySelector("div").textContent;
         editProjectModal.querySelector("h3").textContent = projectTitle;
         editProjectModal.querySelector("input").value = projectTitle;
+        Modal.highlightFirstInputOnModalOpen(editProjectModal);
         editProjectModal.showModal();
         Modal.updateProjectBtnClick = () => {
             const proposedNewTitle =
@@ -425,6 +438,7 @@ class Modal {
         ).textContent = `Are you sure you'd like to delete ${
             event.target.parentNode.querySelector("div").textContent
         }?`;
+        Modal.highlightFirstInputOnModalOpen(areYouSureModal);
         areYouSureModal.showModal();
         Modal.deleteProjectBtnClick = () => {
             Sidebar.deleteProject(event.target.parentNode.dataset.id);
@@ -441,6 +455,7 @@ class Modal {
         areYouSureModal.querySelector(
             "h3"
         ).textContent = `Are you sure you'd like to delete ${task.title}?`;
+        Modal.highlightFirstInputOnModalOpen(areYouSureModal);
         areYouSureModal.showModal();
         Modal.deleteTaskBtnClick = () => {
             Tasks.deleteTask(projectId, taskId);
@@ -451,6 +466,7 @@ class Modal {
     }
 
     static addProject() {
+        Modal.highlightFirstInputOnModalOpen(addProjectModal);
         addProjectModal.showModal();
     }
 
@@ -484,6 +500,10 @@ class Modal {
             .querySelector(".accept-add-task")
             .addEventListener("click", Modal.addATaskBtnClick);
         taskModal.querySelector(".accept-add-task").textContent = "Add Task";
+        taskModal.querySelector(
+            "h3"
+        ).textContent = `Add a New Task to ${getAllProjects[projectId].title}`;
+        Modal.highlightFirstInputOnModalOpen(taskModal);
         taskModal.showModal();
     }
 
@@ -505,6 +525,7 @@ class Modal {
             .querySelector(".accept-add-task")
             .addEventListener("click", Modal.editATaskBtnClick);
         taskModal.querySelector(".accept-add-task").textContent = "Save Task";
+        taskModal.querySelector("h3").textContent = `Edit ${task.title}`;
         taskModal.querySelector("#task-title").value = task.title;
         taskModal.querySelector("#task-due-date").value = DateHandler.format(
             task.dueDate,
@@ -516,6 +537,7 @@ class Modal {
         taskModal.querySelector(
             `#task-status input[name="status"][value="${task.status}"]`
         ).checked = true;
+        Modal.highlightFirstInputOnModalOpen(taskModal);
         taskModal.showModal();
     }
 

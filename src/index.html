@@ -46,28 +46,30 @@
         </div>
         <!-- Edit Project Title -->
         <dialog id="edit-project-title" class="modal">
-            <div>
-                <h3></h3>
-                <label for="new-project-title">New Title</label>
-                <div class="input-wrapper">
-                    <input
-                        type="text"
-                        id="new-project-title"
-                        name="new-project-title"
-                    />
-                    <div class="error-message">Please input a Project name</div>
-                </div>
+            <h3></h3>
+            <label for="new-project-title">New Title</label>
+            <div class="input-wrapper">
+                <input
+                    type="text"
+                    id="new-project-title"
+                    name="new-project-title"
+                />
+                <div class="error-message">Please input a Project name</div>
+            </div>
 
-                <button class="update-edit-project-title">Update</button>
-                <button class="cancel-edit-project-title">Cancel</button>
+            <div class="button-wrapper">
+                <button class="update-edit-project-title affirm">Update</button>
+                <button class="cancel-edit-project-title deny">Cancel</button>
             </div>
         </dialog>
         <!-- Are you sure? modal -->
         <dialog id="are-you-sure" class="modal">
             <div>
                 <h3></h3>
-                <button class="accept-are-you-sure">Yes</button>
-                <button class="decline-are-you-sure">Cancel</button>
+                <div class="button-wrapper">
+                    <button class="accept-are-you-sure affirm">Yes</button>
+                    <button class="decline-are-you-sure deny">Cancel</button>
+                </div>
             </div>
         </dialog>
         <!-- Add a project modal -->
@@ -84,12 +86,17 @@
                     />
                     <div class="error-message">Please input a Project name</div>
                 </div>
-                <button class="accept-add-project">Add Project</button>
-                <button class="decline-add-project">Cancel</button>
+                <div class="button-wrapper">
+                    <button class="accept-add-project affirm">
+                        Add Project
+                    </button>
+                    <button class="decline-add-project deny">Cancel</button>
+                </div>
             </div>
         </dialog>
         <!-- Modal for adding/editing tasks -->
         <dialog id="task-modal" class="modal">
+            <h3></h3>
             <form>
                 <input
                     type="text"
@@ -108,6 +115,7 @@
                     id="task-description"
                     name="task-description"
                     placeholder="Description"
+                    rows="3"
                 ></textarea>
                 <select id="task-priority" name="task-priority">
                     <option value="Low">Low</option>
@@ -118,6 +126,7 @@
                     id="task-notes"
                     name="task-notes"
                     placeholder="Notes"
+                    rows="3"
                 ></textarea>
                 <fieldset id="task-status">
                     <legend>Status:</legend>
@@ -131,7 +140,6 @@
                         />
                         <label for="incomplete">Incomplete</label>
                     </div>
-
                     <div>
                         <input
                             type="radio"
@@ -142,9 +150,14 @@
                         <label for="complete">Complete</label>
                     </div>
                 </fieldset>
-                <legend>Status:</legend>
-                <button type="submit" class="accept-add-task">Add Task</button>
-                <button type="reset" class="cancel-add-task">Cancel</button>
+                <div class="button-wrapper">
+                    <button type="submit" class="accept-add-task affirm">
+                        Add Task
+                    </button>
+                    <button type="reset" class="cancel-add-task deny">
+                        Cancel
+                    </button>
+                </div>
             </form>
         </dialog>
         <!-- Move a task modal -->
@@ -152,8 +165,10 @@
             <div>
                 <h3></h3>
                 <select id="a-new-project" name="a-new-project"></select>
-                <button class="accept-move-task">Move</button>
-                <button class="decline-move-task">Cancel</button>
+                <div class="button-wrapper">
+                    <button class="accept-move-task affirm">Move</button>
+                    <button class="decline-move-task deny">Cancel</button>
+                </div>
             </div>
         </dialog>
     </body>
