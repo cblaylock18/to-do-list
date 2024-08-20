@@ -55,6 +55,40 @@ class AllProjects {
             }
         }
     }
+
+    loadData(allProjectsData) {
+        for (const projectId in allProjectsData) {
+            if (projectId === "unassignedTasks") {
+                this.unassignedTasks = new UnassignedTasksProject();
+                this._loadProjectTasks(
+                    this.unassignedTasks,
+                    allProjectsData[projectId]
+                );
+            } else {
+                const projectData = allProjectsData[projectId];
+                const project = new Project(projectData.title);
+                project.id = projectData.id;
+                project.selected = projectData.selected;
+                this[project.id] = project;
+                this._loadProjectTasks(project, projectData);
+            }
+        }
+    }
+
+    _loadProjectTasks(project, projectData) {
+        projectData.tasks.forEach((taskData) => {
+            const task = new Task(
+                taskData.title,
+                taskData.dueDate,
+                taskData.description,
+                taskData.priority,
+                taskData.notes,
+                taskData.status
+            );
+            task.id = taskData.id; // Assign the original ID
+            project.tasks.push(task);
+        });
+    }
 }
 
 class Project {
@@ -145,6 +179,11 @@ class UnassignedTasksProject extends Project {
         this.selected = true;
     }
 }
+
+// added some load data methods to test out in allprojects above, started looking at local storage data in the two lines below, still figuring that out
+
+const allProjectsData = JSON.parse(localStorage.getItem("allProjects"));
+console.table(allProjectsData);
 
 const allProjects = new AllProjects();
 function accessProjects() {

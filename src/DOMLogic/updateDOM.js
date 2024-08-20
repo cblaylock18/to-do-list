@@ -1,4 +1,8 @@
-import { getAllProjects, DateHandler } from "../aggregator";
+import {
+    getAllProjects,
+    DateHandler,
+    localStorageHandler,
+} from "../aggregator";
 
 // select lists
 const projectList = document.querySelector(".project-list");
@@ -91,6 +95,7 @@ class Sidebar {
         }
         getAllProjects.deleteProject(id);
         Modal.closeAreYouSureModal();
+        localStorageHandler.saveProjectsToLocalStorage();
     }
 
     static updateProject(id) {
@@ -100,6 +105,7 @@ class Sidebar {
             .querySelector("div").textContent = newTitle;
         getAllProjects[id].edit(newTitle);
         Modal.closeEditProjectModal();
+        localStorageHandler.saveProjectsToLocalStorage();
     }
 }
 
@@ -210,6 +216,7 @@ class Tasks {
         } else if (task.priority === "High") {
             taskDOM.classList.add("high");
         }
+        localStorageHandler.saveProjectsToLocalStorage();
     }
 
     static toggleCompletion(event) {
@@ -226,6 +233,7 @@ class Tasks {
             .querySelector('[data-id="' + projectId + '"]')
             .querySelector(".task-count").textContent =
             getAllProjects[projectId].numberOfIncompleteTasks();
+        localStorageHandler.saveProjectsToLocalStorage();
     }
 
     static clearTasks() {
@@ -258,6 +266,7 @@ class Tasks {
             .querySelector('[data-id="' + projectId + '"]')
             .querySelector(".task-count").textContent =
             getAllProjects[projectId].numberOfIncompleteTasks();
+        localStorageHandler.saveProjectsToLocalStorage();
     }
 
     static editATask(projectId, taskId) {
@@ -283,6 +292,7 @@ class Tasks {
             .querySelector(".task-count").textContent =
             getAllProjects[projectId].numberOfIncompleteTasks();
         Tasks.editExistingTask(taskId);
+        localStorageHandler.saveProjectsToLocalStorage();
     }
 
     static deleteTask(projectId, taskId) {
@@ -294,6 +304,7 @@ class Tasks {
             .querySelector(".task-count").textContent =
             getAllProjects[projectId].numberOfIncompleteTasks();
         Modal.closeAreYouSureModal();
+        localStorageHandler.saveProjectsToLocalStorage();
     }
 
     static moveATask(currentProjectId, newProjectId, task) {
@@ -307,6 +318,7 @@ class Tasks {
             .querySelector('[data-id="' + newProjectId + '"]')
             .querySelector(".task-count").textContent =
             getAllProjects[newProjectId].numberOfIncompleteTasks();
+        localStorageHandler.saveProjectsToLocalStorage();
     }
 }
 
@@ -342,8 +354,6 @@ class Modal {
 
     static highlightFirstInputOnModalOpen(modal) {
         const firstInput = modal.querySelector("input, textarea");
-        console.log(firstInput);
-        console.log("hi");
         if (firstInput) {
             firstInput.focus();
             setTimeout(() => {
@@ -481,6 +491,7 @@ class Modal {
         }
         const newProjectId = getAllProjects.addProject(proposedNewTitle);
         Sidebar.addAProject(getAllProjects[newProjectId]);
+        localStorageHandler.saveProjectsToLocalStorage();
         Modal.closeAddProjectModal();
     }
 
@@ -566,11 +577,11 @@ class Modal {
     }
 }
 
-function initializeDOM() {
+function initializePage() {
     taskHeader.textContent = `Unassigned Tasks`;
     Sidebar.initializeSidebar();
     Modal.initializeModals();
     Tasks.initializeTasks();
 }
 
-export { initializeDOM };
+export { initializePage };

@@ -1,4 +1,3 @@
-import { DateHandler } from "../aggregator.js";
 import ShortUniqueId from "short-unique-id";
 const { randomUUID } = new ShortUniqueId({ length: 10 });
 
@@ -11,14 +10,6 @@ class Task {
         this.priority = priority;
         this.notes = notes;
         this.status = status;
-    }
-
-    get dueDate() {
-        return this._dueDate;
-    }
-
-    set dueDate(value) {
-        this._dueDate = DateHandler.format(value, "MM-dd-yyyy");
     }
 
     get status() {
@@ -50,10 +41,6 @@ class Task {
         this.priority = priority;
         this.notes = notes;
         this.status = status;
-    }
-
-    daysUntilDue() {
-        return DateHandler.daysUntil(this.dueDate);
     }
 
     toggleStatus() {
