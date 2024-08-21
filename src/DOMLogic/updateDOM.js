@@ -34,6 +34,25 @@ class Sidebar {
 
         // Event delegation for project clicks
         projectList.addEventListener("click", Tasks.selectAProject);
+
+        const projectId = getAllProjects.selectedProject();
+        const projectDiv = document.querySelector(
+            '[data-id="' + projectId + '"]'
+        );
+        Tasks.clearTasks();
+        Array.from(projectList.children).forEach((child) => {
+            child.classList.remove("selected");
+        });
+        projectDiv.classList.add("selected");
+        const project = getAllProjects[projectId];
+        if (project.id === "unassignedTasks") {
+            taskHeader.textContent = `Unassigned Tasks`;
+        } else {
+            taskHeader.textContent = `${project.title} Tasks`;
+        }
+        project.tasks.forEach((task) => {
+            Tasks.listATask(task);
+        });
     }
 
     static addAProject(newProject) {
@@ -110,17 +129,6 @@ class Sidebar {
 }
 
 class Tasks {
-    static initializeTasks() {
-        getAllProjects.unassignedTasks.tasks.forEach((task) => {
-            Tasks.listATask(task);
-        });
-        Array.from(projectList.children).forEach((child) => {
-            if (child.dataset.id === "unassignedTasks") {
-                child.classList.add("selected");
-            }
-        });
-    }
-
     static selectAProject(event) {
         // Find the project div by traversing the DOM up from the event target
         let projectDiv = event.target;
@@ -137,6 +145,7 @@ class Tasks {
             const projectId = projectDiv.dataset.id;
             Tasks.clearTasks();
             getAllProjects.selectAProject(projectId);
+            localStorageHandler.saveProjectsToLocalStorage();
             Array.from(projectList.children).forEach((child) => {
                 child.classList.remove("selected");
             });
@@ -578,10 +587,8 @@ class Modal {
 }
 
 function initializePage() {
-    taskHeader.textContent = `Unassigned Tasks`;
     Sidebar.initializeSidebar();
     Modal.initializeModals();
-    Tasks.initializeTasks();
 }
 
 export { initializePage };

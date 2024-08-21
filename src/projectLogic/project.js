@@ -60,8 +60,8 @@ class AllProjects {
         for (const projectId in allProjectsData) {
             if (projectId === "unassignedTasks") {
                 this.initializeUnassignedTasks();
-
-                console.table(allProjectsData[projectId].tasks);
+                this.unassignedTasks.selected =
+                    allProjectsData[projectId].selected;
 
                 this._loadProjectTasks(
                     this.unassignedTasks,
@@ -71,10 +71,8 @@ class AllProjects {
                 const projectData = allProjectsData[projectId];
                 const project = new Project(projectData.title);
                 project.id = projectData.id;
-                project.selected = false;
+                project.selected = projectData.selected;
                 this[project.id] = project;
-
-                console.table(project);
 
                 this._loadProjectTasks(project, projectData);
             }
@@ -87,9 +85,9 @@ class AllProjects {
                 taskData.title,
                 taskData.dueDate,
                 taskData.description,
-                taskData.priority,
+                taskData._priority,
                 taskData.notes,
-                taskData.status
+                taskData._status
             );
             newTask.id = taskData.id; // Assign the original ID
             project.tasks.push(newTask);
@@ -191,7 +189,6 @@ const allProjects = new AllProjects();
 
 // parse local storage for data
 const allProjectsData = JSON.parse(localStorage.getItem("allProjects"));
-console.table(allProjectsData);
 
 // if local storage has data, load it into all projects,
 // otherwise, create blank all projects and add unassigned tasks (default project)

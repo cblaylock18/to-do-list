@@ -20,6 +20,8 @@ class Task {
         const validStatuses = ["Complete", "Incomplete"];
         if (validStatuses.includes(value)) {
             this._status = value;
+        } else {
+            this._status = "Incomplete";
         }
     }
 
