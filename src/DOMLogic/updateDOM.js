@@ -337,17 +337,19 @@ class Tasks {
     }
 
     static moveATask(currentProjectId, newProjectId, task) {
-        getAllProjects.moveATask(currentProjectId, newProjectId, task);
-        Tasks.deleteTask(currentProjectId, task.id);
-        projectList
-            .querySelector('[data-id="' + currentProjectId + '"]')
-            .querySelector(".task-count").textContent =
-            getAllProjects[currentProjectId].numberOfIncompleteTasks();
-        projectList
-            .querySelector('[data-id="' + newProjectId + '"]')
-            .querySelector(".task-count").textContent =
-            getAllProjects[newProjectId].numberOfIncompleteTasks();
-        localStorageHandler.saveProjectsToLocalStorage();
+        if (currentProjectId !== newProjectId) {
+            getAllProjects.moveATask(currentProjectId, newProjectId, task);
+            Tasks.deleteTask(currentProjectId, task.id);
+            projectList
+                .querySelector('[data-id="' + currentProjectId + '"]')
+                .querySelector(".task-count").textContent =
+                getAllProjects[currentProjectId].numberOfIncompleteTasks();
+            projectList
+                .querySelector('[data-id="' + newProjectId + '"]')
+                .querySelector(".task-count").textContent =
+                getAllProjects[newProjectId].numberOfIncompleteTasks();
+            localStorageHandler.saveProjectsToLocalStorage();
+        }
     }
 }
 
