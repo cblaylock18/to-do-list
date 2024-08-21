@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>To-Do List</title>
+    <script defer src="bundle.js"></script></head>
+    <body>
+        <div id="site">
+            <header>
+                <img
+                    alt="To-do list site logo, an image of a checklist"
+                    class="logo"
+                />
+                <h1>To-Do Tracker</h1>
+                <img alt="user icon" class="user-icon" />
+                <div>Levi Ackerman</div>
+            </header>
+            <div class="sidebar">
+                <h2>Your Projects</h2>
+                <button class="add-project">Add a New Project</button>
+                <div class="project-list"></div>
+            </div>
+            <div class="content">
+                <h2 class="task-header">Your Tasks</h2>
+                <div class="task-list">
+                    <template id="task-template">
+                        <div class="task">
+                            <h3 class="title">Title</h3>
+                            <div class="due">Due:</div>
+                            <div class="due-content"></div>
+                            <div class="description">Description</div>
+                            <div class="description-content"></div>
+                            <div class="priority">Priority</div>
+                            <div class="priority-content"></div>
+                            <div class="notes">Notes</div>
+                            <div class="notes-content"></div>
+                            <div class="status-content"></div>
+                            <button class="edit-task">Edit</button>
+                            <button class="move-task">Move</button>
+                            <button class="delete-task">Delete</button>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+        <!-- Edit Project Title -->
+        <dialog id="edit-project-title" class="modal">
+            <h3></h3>
+            <label for="new-project-title">New Title</label>
+            <div class="input-wrapper">
+                <input
+                    type="text"
+                    id="new-project-title"
+                    name="new-project-title"
+                />
+                <div class="error-message">Please input a Project name</div>
+            </div>
+
+            <div class="button-wrapper">
+                <button class="update-edit-project-title affirm">Update</button>
+                <button class="cancel-edit-project-title deny">Cancel</button>
+            </div>
+        </dialog>
+        <!-- Are you sure? modal -->
+        <dialog id="are-you-sure" class="modal">
+                <h3></h3>
+                <div class="button-wrapper">
+                    <button class="accept-are-you-sure affirm">Yes</button>
+                    <button class="decline-are-you-sure deny">Cancel</button>
+                </div>
+        </dialog>
+        <!-- Add a project modal -->
+        <dialog id="add-project" class="modal">
+                <h3>Add a New Project</h3>
+                <label for="add-project-title">Title</label>
+                <div class="input-wrapper">
+                    <input
+                        type="text"
+                        id="add-project-title"
+                        name="add-project-title"
+                        class=""
+                    />
+                    <div class="error-message">Please input a Project name</div>
+                </div>
+                <div class="button-wrapper">
+                    <button class="accept-add-project affirm">
+                        Add Project
+                    </button>
+                    <button class="decline-add-project deny">Cancel</button>
+                </div>
+        </dialog>
+        <!-- Modal for adding/editing tasks -->
+        <dialog id="task-modal" class="modal">
+            <h3></h3>
+            <form>
+                <input
+                    type="text"
+                    id="task-title"
+                    name="task-title"
+                    placeholder="Title"
+                    required
+                />
+                <input
+                    type="date"
+                    id="task-due-date"
+                    name="task-due-date"
+                    required
+                />
+                <textarea
+                    id="task-description"
+                    name="task-description"
+                    placeholder="Description"
+                    rows="3"
+                ></textarea>
+                <select id="task-priority" name="task-priority">
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                </select>
+                <textarea
+                    id="task-notes"
+                    name="task-notes"
+                    placeholder="Notes"
+                    rows="3"
+                ></textarea>
+                <fieldset id="task-status">
+                    <legend>Status:</legend>
+                    <div>
+                        <input
+                            type="radio"
+                            id="incomplete"
+                            name="status"
+                            value="Incomplete"
+                            checked
+                        />
+                        <label for="incomplete">Incomplete</label>
+                    </div>
+                    <div>
+                        <input
+                            type="radio"
+                            id="complete"
+                            name="status"
+                            value="Complete"
+                        />
+                        <label for="complete">Complete</label>
+                    </div>
+                </fieldset>
+                <div class="button-wrapper">
+                    <button type="submit" class="accept-add-task affirm">
+                        Add Task
+                    </button>
+                    <button type="reset" class="cancel-add-task deny">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </dialog>
+        <!-- Move a task modal -->
+        <dialog id="move-a-task" class="modal">
+                <h3></h3>
+                <select id="a-new-project" name="a-new-project"></select>
+                <div class="button-wrapper">
+                    <button class="accept-move-task affirm">Move</button>
+                    <button class="decline-move-task deny">Cancel</button>
+                </div>
+        </dialog>
+    </body>
+</html>
