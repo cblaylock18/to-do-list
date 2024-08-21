@@ -110,7 +110,7 @@ class Sidebar {
         if (getAllProjects[id].selected === true) {
             getAllProjects.selectAProject("unassignedTasks");
             Tasks.clearTasks();
-            Tasks.initializeTasks();
+            Tasks.selectDefaultProject();
         }
         getAllProjects.deleteProject(id);
         Modal.closeAreYouSureModal();
@@ -123,6 +123,9 @@ class Sidebar {
             .querySelector('[data-id="' + id + '"]')
             .querySelector("div").textContent = newTitle;
         getAllProjects[id].edit(newTitle);
+        if (id === getAllProjects.selectedProject) {
+            taskHeader.textContent = `${project.title} Tasks`;
+        }
         Modal.closeEditProjectModal();
         localStorageHandler.saveProjectsToLocalStorage();
     }
@@ -160,6 +163,23 @@ class Tasks {
                 Tasks.listATask(task);
             });
         }
+    }
+
+    static selectDefaultProject() {
+        const projectDiv = document.querySelector(
+            '[data-id="' + "unassignedTasks" + '"]'
+        );
+        Tasks.clearTasks();
+        Array.from(projectList.children).forEach((child) => {
+            child.classList.remove("selected");
+        });
+        projectDiv.classList.add("selected");
+        const project = getAllProjects.unassignedTasks;
+        taskHeader.textContent = `Unassigned Tasks`;
+
+        project.tasks.forEach((task) => {
+            Tasks.listATask(task);
+        });
     }
 
     static listATask(task) {
@@ -547,10 +567,7 @@ class Modal {
         taskModal.querySelector(".accept-add-task").textContent = "Save Task";
         taskModal.querySelector("h3").textContent = `Edit ${task.title}`;
         taskModal.querySelector("#task-title").value = task.title;
-        taskModal.querySelector("#task-due-date").value = DateHandler.format(
-            task.dueDate,
-            "yyyy-MM-dd"
-        );
+        taskModal.querySelector("#task-due-date").value = task.dueDate;
         taskModal.querySelector("#task-description").value = task.description;
         taskModal.querySelector("#task-priority").value = task.priority;
         taskModal.querySelector("#task-notes").value = task.notes;
