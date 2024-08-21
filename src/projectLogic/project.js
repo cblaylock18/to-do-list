@@ -3,8 +3,8 @@ import ShortUniqueId from "short-unique-id";
 const { randomUUID } = new ShortUniqueId({ length: 10 });
 
 class AllProjects {
-    constructor() {
-        this.unassignedTasks = new UnassignedTasksProject("Unassigned Tasks");
+    initializeUnassignedTasks() {
+        this.unassignedTasks = new UnassignedTasksProject();
     }
 
     addProject(title) {
@@ -59,7 +59,10 @@ class AllProjects {
     loadData(allProjectsData) {
         for (const projectId in allProjectsData) {
             if (projectId === "unassignedTasks") {
-                this.unassignedTasks = new UnassignedTasksProject();
+                this.initializeUnassignedTasks();
+
+                console.table(allProjectsData[projectId].tasks);
+
                 this._loadProjectTasks(
                     this.unassignedTasks,
                     allProjectsData[projectId]
@@ -68,8 +71,11 @@ class AllProjects {
                 const projectData = allProjectsData[projectId];
                 const project = new Project(projectData.title);
                 project.id = projectData.id;
-                project.selected = projectData.selected;
+                project.selected = false;
                 this[project.id] = project;
+
+                console.table(project);
+
                 this._loadProjectTasks(project, projectData);
             }
         }
@@ -77,7 +83,7 @@ class AllProjects {
 
     _loadProjectTasks(project, projectData) {
         projectData.tasks.forEach((taskData) => {
-            const task = new Task(
+            const newTask = new Task(
                 taskData.title,
                 taskData.dueDate,
                 taskData.description,
@@ -85,8 +91,8 @@ class AllProjects {
                 taskData.notes,
                 taskData.status
             );
-            task.id = taskData.id; // Assign the original ID
-            project.tasks.push(task);
+            newTask.id = taskData.id; // Assign the original ID
+            project.tasks.push(newTask);
         });
     }
 }
@@ -180,12 +186,21 @@ class UnassignedTasksProject extends Project {
     }
 }
 
-// added some load data methods to test out in allprojects above, started looking at local storage data in the two lines below, still figuring that out
+// initialize allProjects object
+const allProjects = new AllProjects();
 
+// parse local storage for data
 const allProjectsData = JSON.parse(localStorage.getItem("allProjects"));
 console.table(allProjectsData);
 
-const allProjects = new AllProjects();
+// if local storage has data, load it into all projects,
+// otherwise, create blank all projects and add unassigned tasks (default project)
+if (allProjectsData) {
+    allProjects.loadData(allProjectsData);
+} else {
+    allProjects.initializeUnassignedTasks();
+}
+
 function accessProjects() {
     return allProjects;
 }

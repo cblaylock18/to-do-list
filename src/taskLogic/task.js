@@ -31,6 +31,8 @@ class Task {
         const validPriorities = ["Low", "Medium", "High"];
         if (validPriorities.includes(value)) {
             this._priority = value;
+        } else {
+            this._priority = "Low";
         }
     }
 

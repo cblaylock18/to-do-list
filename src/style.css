@@ -468,6 +468,7 @@ h2 {
 
 .task > .priority-content {
     grid-area: 6 / 1 / 7 / 3;
+    height: 1.7rem;
 }
 
 .task > .notes {
