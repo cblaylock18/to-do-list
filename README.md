@@ -40,7 +40,7 @@ A simple To-Do List application built as part of The Odin Project curriculum to 
 
 ## Usage
 
-1. **Add a Project:** Click "Add a new project". Fill out it's title. Click add. 
+1. **Add a Project:** Click "Add a new project". Fill out its title. Click add. 
 2. **Add a Task:** Click "Add a task" on the desired project. Fill out the form and click add.
 3. **Complete a Task:** Click on a task's "Complete" or "Incomplete" text to toggle its completion status.
 4. **Edit a Task:** Click "Edit" on a task to adjust any of the info on it.
